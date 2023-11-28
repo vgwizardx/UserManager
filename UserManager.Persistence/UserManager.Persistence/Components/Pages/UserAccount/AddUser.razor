@@ -1,0 +1,56 @@
+﻿@using UserManager.Persistence.Models
+
+<div class="row">
+    <div class="col-lg-4 pt-4">
+        <EditForm Model="_user" OnSubmit="Submit">
+            <div class="mb-3">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-control" @bind-value="_user.FirstName">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-control" @bind-value="_user.LastName">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Street Address</label>
+                <input type="text" class="form-control" @bind-value="_user.StreetAddress">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">City</label>
+                <input type="text" class="form-control" @bind-value="_user.City">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">State</label>
+                <input type="text" class="form-control" @bind-value="_user.State">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Zip Code</label>
+                <input type="text" class="form-control" @bind-value="_user.ZipCode">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Age</label>
+                <input type="text" class="form-control" @bind-value="_user.Age">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" @bind-value="_user.Email">
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnUserCreated{ get; set; }
+
+    private User _user = new User();
+
+    public async Task Submit()
+    {
+
+
+    }
+}

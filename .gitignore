@@ -396,3 +396,46 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Containers
+.containers*
+.idea*
+
+# Docker - Exclude files and folders related to Docker
+**/Dockerfile
+**/.dockerignore
+docker-compose*.yml
+docker-compose.override.yml
+.docker/
+*.dockerfile
+
+# Exclude Docker volumes and generated files
+**/docker/volumes/
+**/docker/tmp/
+
+# Exclude Docker environment configuration files
+docker.env
+docker-compose.env
+
+# xUnit - Test results and related files
+[Tt]est[Rr]esult*/
+*.VisualState.xml
+TestResult.xml
+
+# Exclude xUnit Runner report files
+xunit-*.xml
+
+# Exclude .NET test run files for xUnit
+*.trx
+*.testlog
+
+# Exclude Visual Studio code coverage and test results for xUnit
+*.coverage
+*.coveragexml
+
+# Exclude temporary files created by xUnit tests
+*.xunit.runner.json
+xunit.runner.json
+
+# Exclude user-specific xUnit configuration
+xunit.runner.*.json

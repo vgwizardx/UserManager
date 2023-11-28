@@ -1,0 +1,42 @@
+﻿@page "/users"
+@using UserManager.Persistence.Models
+@attribute [StreamRendering]
+
+<PageTitle>Users</PageTitle>
+
+<h1>Users</h1>
+
+@if (Users is not null || Users!.Count != 0)
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Street Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip Code</th>
+            <th>Age</th>
+            <th>Email</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Users.Count; i++)
+        {
+            <UserRecord RecordIndex=(i+1) User="@Users[i]" UserDelete="UserDelete"></UserRecord>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public List<User>? Users { get; set; }
+
+    [Parameter]
+    public EventCallback<User> UserDelete { get; set; }
+}
+

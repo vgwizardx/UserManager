@@ -1,0 +1,29 @@
+﻿@using UserManager.Persistence.Models
+<tr>
+    <td>@RecordIndex</td>
+    <td>@User.Id</td>
+    <td>@User.FirstName</td>
+    <td>@User.LastName</td>
+    <td>@User.StreetAddress</td>
+    <td>@User.City</td>
+    <td>@User.State</td>
+    <td>@User.ZipCode</td>
+    <td>@User.Age</td>
+    <td>@User.Email</td>
+    <td>
+        <a href="javascript:void(0)" @onclick="(async () => await UserDelete.InvokeAsync(User))">
+            <i class="oi oi-trash"></i>
+        </a>
+    </td>
+</tr>
+
+@code {
+    [Parameter]
+    public int RecordIndex { get; set; }
+
+    [Parameter]
+    public User User { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<User> UserDelete { get; set; }
+}
