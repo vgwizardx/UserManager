@@ -1,8 +1,9 @@
-﻿@page "/users"
+@page "/users"
 @using UserManager.Persistence.Models
 @using Domain.Interfaces.Services
 @using Domain.Common.DTOs
 @inject IUserService UserService
+@rendermode InteractiveServer
 
 <ul class="nav nav-tabs" id="users-tab-nav" role="tablist">
     <li class="nav-item" role="presentation">
@@ -28,7 +29,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-       //await FetchUsers();
+       await FetchUsers();
     }
 
     private async Task FetchUsers()
@@ -54,22 +55,26 @@
 
     public async Task DeleteUser(User user)
     {
-       await Task.Delay(200);
+        Console.WriteLine("User Deleted");
+        await Task.Delay(200);
     }
 
     private void StartEditing(User user)
     {
+        Console.WriteLine("User Start");
         _userToEdit = user;
         _userToEdit.IsEditing = true;
     }
 
     private void CancelEdit(User user)
     {
+        Console.WriteLine("User Cancel");
         user.IsEditing = false;
     }
 
     private async Task SaveChanges(User user)
     {
+        Console.WriteLine("User Save");
         if (user.IsEditing)
         {
             try

@@ -2,6 +2,7 @@
 @using Domain.Common.DTOs
 @using Domain.Interfaces.Services
 @inject IUserService UserService
+@rendermode InteractiveServer
 
 @if (User.IsEditing)
 {
@@ -35,6 +36,8 @@
             <button type="button" class="btn btn-link" @onclick="() => Cancel.InvokeAsync(User)">
                 <i class="bi bi-x-circle"></i>
             </button>
+        </td>
+        <td>
             <button type="button" class="btn btn-link" @onclick="async () => await Save.InvokeAsync(User)">
                 <i class="bi bi-floppy"></i>
             </button>
