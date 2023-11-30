@@ -1,39 +1,55 @@
 ﻿@using UserManager.Persistence.Models
+@using Domain.Interfaces.Services
+@using Domain.Common.DTOs
+@using Microsoft.AspNetCore.Antiforgery
+@using Microsoft.AspNetCore.Mvc
+
+@inject IUserService UserService
+
 
 <div class="row">
     <div class="col-lg-4 pt-4">
-        <EditForm Model="_user" OnSubmit="Submit">
+        <EditForm Model="_user" OnValidSubmit="Submit" FormName="AddUser">
+            <DataAnnotationsValidator />
             <div class="mb-3">
                 <label class="form-label">First Name</label>
                 <input type="text" class="form-control" @bind-value="_user.FirstName">
+                <ValidationMessage For="@(() => _user.FirstName)"/>
             </div>
             <div class="mb-3">
                 <label class="form-label">Last Name</label>
                 <input type="text" class="form-control" @bind-value="_user.LastName">
+                <ValidationMessage For="@(() => _user.LastName)"/>
             </div>
             <div class="mb-3">
                 <label class="form-label">Street Address</label>
                 <input type="text" class="form-control" @bind-value="_user.StreetAddress">
+                <ValidationMessage For="@(() => _user.StreetAddress)"/>
             </div>
             <div class="mb-3">
                 <label class="form-label">City</label>
                 <input type="text" class="form-control" @bind-value="_user.City">
+                <ValidationMessage For="@(() => _user.City)"/>
             </div>
             <div class="mb-3">
                 <label class="form-label">State</label>
                 <input type="text" class="form-control" @bind-value="_user.State">
+                <ValidationMessage For="@(() => _user.State)"/>
             </div>
             <div class="mb-3">
                 <label class="form-label">Zip Code</label>
                 <input type="text" class="form-control" @bind-value="_user.ZipCode">
+                <ValidationMessage For="@(() => _user.ZipCode)"/>
             </div>
             <div class="mb-3">
                 <label class="form-label">Age</label>
-                <input type="text" class="form-control" @bind-value="_user.Age">
+                <input type="number" class="form-control" @bind-value="_user.Age">
+                <ValidationMessage For="@(() => _user.Age)"/>
             </div>
             <div class="mb-3">
                 <label class="form-label">Email</label>
                 <input type="email" class="form-control" @bind-value="_user.Email">
+                <ValidationMessage For="@(() => _user.Email)"/>
             </div>
             <div class="mb-3">
                 <button class="btn btn-primary" type="submit">Save</button>
@@ -48,9 +64,39 @@
 
     private User _user = new User();
 
+    [ValidateAntiForgeryToken]
     public async Task Submit()
-    {
+    {   
+        var editContext = new EditContext(_user);
 
+        if (editContext.Validate())
+        {
+            var user = new AddUserRequest
+            {
+                FirstName = _user.FirstName,
+                LastName = _user.LastName,
+                StreetAddress = _user.StreetAddress,
+                City = _user.City,
+                State = _user.State,
+                ZipCode = _user.ZipCode,
+                Age = _user.Age,
+                Email = _user.Email
+            };
+            var response = await UserService.AddUserAsync(user);
 
+            if (response != null)
+            {
+                _user = new User();
+
+                if (OnUserCreated.HasDelegate)
+                {
+                    await OnUserCreated.InvokeAsync();
+                }
+            }
+            else
+            {
+                
+            }
+        }
     }
 }

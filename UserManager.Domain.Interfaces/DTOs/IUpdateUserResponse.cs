@@ -1,6 +1,6 @@
 ﻿namespace Domain.Interfaces.DTOs;
 
-public interface IUpdateUserResponse
+public interface IUpdateUserResponse : IBaseDTO
 {
-    public string? Email { get; set; }
+    string? Email { get; set; }
 }

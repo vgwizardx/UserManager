@@ -4,7 +4,7 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerPublishLocally>False</DockerPublishLocally>
-    <ProjectGuid>ddd48137-8891-4ab5-91ef-9e43c259d184</ProjectGuid>
+    <ProjectGuid>334bc3b6-a9a5-4074-b5de-18a4b6e76f7c</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>usermanager.application.api</DockerServiceName>

@@ -1,15 +1,13 @@
-﻿@page "/users"
+﻿@using Domain.Common.DTOs
+@using Domain.Interfaces.Services
 @using UserManager.Persistence.Models
+@inject IUserService UserService
 @attribute [StreamRendering]
 
-<PageTitle>Users</PageTitle>
-
-<h1>Users</h1>
-
-@if (Users is not null || Users!.Count != 0)
+@if (Users is not null && Users!.Count != 0)
 {
-    <table class="table">
-        <thead>
+ <table class="table">
+    <thead>
         <tr>
             <th>ID</th>
             <th>First Name</th>
@@ -21,22 +19,35 @@
             <th>Age</th>
             <th>Email</th>
             <th></th>
+            <th></th>
         </tr>
-        </thead>
-        <tbody>
-        @for (int i = 0; i < Users.Count; i++)
+    </thead>
+    <tbody>
+        @for (var i = 0; i < Users.Count; i++)
         {
-            <UserRecord RecordIndex=(i+1) User="@Users[i]" UserDelete="UserDelete"></UserRecord>
+                <UserRecord User="@Users[i]" UserDelete="UserDelete" Cancel="Cancel" Save="Save" Start="Start"></UserRecord>
         }
-        </tbody>
-    </table>
+    </tbody>
+ </table>
 }
 
 @code {
-    [Parameter]
-    public List<User>? Users { get; set; }
 
     [Parameter]
+    public List<User>? Users { get; set; } = new();
+    
+    [Parameter]
     public EventCallback<User> UserDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<User> Start { get; set; }
+
+    [Parameter]
+    public EventCallback<User> Cancel { get; set; }
+
+    [Parameter]
+    public EventCallback<User> Save { get; set; }
+
+    
 }
 

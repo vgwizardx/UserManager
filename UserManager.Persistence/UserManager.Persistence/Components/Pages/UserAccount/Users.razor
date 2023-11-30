@@ -1,5 +1,8 @@
 ﻿@page "/users"
 @using UserManager.Persistence.Models
+@using Domain.Interfaces.Services
+@using Domain.Common.DTOs
+@inject IUserService UserService
 
 <ul class="nav nav-tabs" id="users-tab-nav" role="tablist">
     <li class="nav-item" role="presentation">
@@ -11,26 +14,120 @@
 </ul>
 <div class="tab-content" id="users-tab-content">
     <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
-       @*  <UserList Users="_users" UserDelete="DeleteUser" /> *@
+        <UserList Users="_users" UserDelete="DeleteUser" Cancel="CancelEdit" Save="SaveChanges" Start="StartEditing" />
     </div>
     <div class="tab-pane fade" id="add-user" role="tabpanel" aria-labelledby="add-user-tab">
-       @*  <AddUser OnUserCreated="FetchUsers" /> *@
+         <AddUser OnUserCreated="FetchUsers" /> 
     </div>
 </div>
 
 @code{
     private List<User>? _users;
 
-    protected override void OnInitialized()
+    private User _userToEdit = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        //FetchUsers();
-        base.OnInitialized();
+       //await FetchUsers();
     }
 
-    //private void FetchUsers() => _users = dbContext.Users.ToList();
+    private async Task FetchUsers()
+    {
+        var response = await UserService.GetAsync();
 
-    // public Task DeleteUser(User user)
-    // {
+        if (response != null)
+        {
+            _users = response.Users.Select(userInfo => new User
+            {
+                Id = userInfo.Id,
+                FirstName = userInfo.FirstName,
+                LastName = userInfo.LastName,
+                StreetAddress = userInfo.StreetAddress,
+                City = userInfo.City,
+                State = userInfo.State,
+                ZipCode = userInfo.ZipCode,
+                Age = userInfo.Age,
+                Email = userInfo.Email
+            }).ToList();
+        }
+    }
 
-    // }
+    public async Task DeleteUser(User user)
+    {
+       await Task.Delay(200);
+    }
+
+    private void StartEditing(User user)
+    {
+        _userToEdit = user;
+        _userToEdit.IsEditing = true;
+    }
+
+    private void CancelEdit(User user)
+    {
+        user.IsEditing = false;
+    }
+
+    private async Task SaveChanges(User user)
+    {
+        if (user.IsEditing)
+        {
+            try
+            {
+                // Create an IUpdateUserRequest with the updated value
+                var request = new UpdateUserRequest
+                    {
+                        FirstName = user.FirstName, // Initialize with the current value
+                        LastName = user.LastName, // Initialize with the current value
+                        StreetAddress = user.StreetAddress,
+                        City = user.City,
+                        State = user.State,
+                        ZipCode = user.ZipCode,
+                        Age = user.Age,
+                        Email = user.Email
+                    };
+                request.FirstName = _userToEdit.EditedValue;
+                request.LastName = _userToEdit.EditedValue;
+                request.StreetAddress = _userToEdit.EditedValue;
+                request.City = _userToEdit.EditedValue;
+                request.State = _userToEdit.EditedValue;
+                request.ZipCode = _userToEdit.EditedValue;
+                if (int.TryParse(_userToEdit.EditedValue, out var age))
+                {
+                    request.Age = age;
+                }
+                request.Email = _userToEdit.EditedValue;
+
+                // Call the UserService to update the user
+                var response = await UserService.UpdateUserAsync(user.Id, request);
+
+                if (response != null)
+                {
+                    // Update the original value with the edited value
+                    user.FirstName = request.FirstName;
+                    user.LastName = request.LastName;
+                    user.StreetAddress = request.StreetAddress;
+                    user.City = request.City;
+                    user.State = request.State;
+                    user.ZipCode = request.ZipCode;
+                    user.Age = request.Age;
+                    user.Email = request.Email;
+                }
+                else
+                {
+                    //TODO: Handle the update error here, e.g., show an error message
+                    // Add error handling logic
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO: add logger
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                user.IsEditing = false;
+            }
+        }
+    }
 }

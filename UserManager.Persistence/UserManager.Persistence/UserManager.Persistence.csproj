@@ -13,9 +13,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Domain.Common\Domain.Common.csproj" />
     <ProjectReference Include="..\..\UserManager.Domain.Interfaces\Domain.Interfaces.csproj" />
-    <ProjectReference Include="..\UserManager.Persistence.Client\UserManager.Persistence.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>

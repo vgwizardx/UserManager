@@ -4,7 +4,9 @@ namespace Domain.Common.DTOs;
 
 public class BaseDTO : IBaseDTO
 {
+    
     private Guid _id;
+
     public Guid Id 
     { 
         get => _id;

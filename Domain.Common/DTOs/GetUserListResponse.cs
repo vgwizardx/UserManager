@@ -4,10 +4,10 @@ namespace Domain.Common.DTOs;
 
 public class GetUserListResponse : IGetUserListResponse
 {
-    public IEnumerable<IUser> Users { get; set; } = new List<User>();
+    public IEnumerable<IUser> Users { get; set; } = new List<UserInfo>();
 }
 
-public class User : BaseDTO, IUser
+public class UserInfo : BaseDTO, IUser
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

@@ -5,8 +5,16 @@ using Domain.Interfaces.Services;
 
 namespace UserManager.Application.API.Services;
 
+/// <summary>
+/// 
+/// </summary>
 public class UserService : IUserService
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<IGetUserResponse?> GetAsync(Guid id)
     {
         // Using AutoBogus to generate a fake response
@@ -23,9 +31,14 @@ public class UserService : IUserService
         return await Task.FromResult(fakeUserResponse);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public async Task<IGetUserListResponse?> GetAsync()
     {
-        var userInfoFaker = new AutoFaker<User>()
+        var userInfoFaker = new AutoFaker<UserInfo>()
+            .RuleFor(u => u.Id, faker => faker.Random.Guid()) 
             .RuleFor(u => u.FirstName, faker => faker.Name.FirstName())
             .RuleFor(u => u.LastName, faker => faker.Name.LastName())
             .RuleFor(u => u.StreetAddress, faker => faker.Address.StreetAddress())
@@ -35,7 +48,7 @@ public class UserService : IUserService
             .RuleFor(u => u.Age, faker => faker.Random.Int(18, 100))
             .RuleFor(u => u.Email, faker => faker.Internet.Email());
 
-        List<User> userInfos = userInfoFaker.Generate(5); 
+        List<UserInfo> userInfos = userInfoFaker.Generate(5); 
 
         var fakeUserListResponse = new GetUserListResponse
         {
@@ -45,6 +58,11 @@ public class UserService : IUserService
         return await Task.FromResult(fakeUserListResponse);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     public async Task<IAddUserResponse?> AddUserAsync(IAddUserRequest request)
     {
         // Generating a fake response for adding a user
@@ -54,6 +72,12 @@ public class UserService : IUserService
         return await Task.FromResult(fakeAddUserResponse);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="request"></param>
+    /// <returns></returns>
     public async Task<IUpdateUserResponse?> UpdateUserAsync(Guid id, IUpdateUserRequest request)
     {
         // Generating a fake response for updating a user

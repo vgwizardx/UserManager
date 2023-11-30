@@ -9,7 +9,7 @@ namespace UserManager.Application.API.Controllers;
 /// <summary>
 /// Controller for handling user-related operations.
 /// </summary>
-[Route("api/[controller]")]
+[Route("api/user")]
 [ApiController]
 public class UserController : ControllerBase
 {

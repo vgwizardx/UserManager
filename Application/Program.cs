@@ -1,4 +1,7 @@
+using System.Reflection;
+using Domain.Interfaces.Services;
 using Serilog;
+using UserManager.Application.API.Services;
 using Utilities.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +13,12 @@ builder.Host.UseSerilog((context, loggerConfig) =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, 
+        $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+});
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<CorrelationIdMiddleware>();
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
@@ -23,11 +31,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseSerilogRequestLogging();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 #region Middlewares
 app.UseMiddleware<CorrelationIdMiddleware>();

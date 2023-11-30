@@ -1,29 +1,88 @@
 ﻿@using UserManager.Persistence.Models
-<tr>
-    <td>@RecordIndex</td>
-    <td>@User.Id</td>
-    <td>@User.FirstName</td>
-    <td>@User.LastName</td>
-    <td>@User.StreetAddress</td>
-    <td>@User.City</td>
-    <td>@User.State</td>
-    <td>@User.ZipCode</td>
-    <td>@User.Age</td>
-    <td>@User.Email</td>
-    <td>
-        <a href="javascript:void(0)" @onclick="(async () => await UserDelete.InvokeAsync(User))">
-            <i class="oi oi-trash"></i>
-        </a>
-    </td>
-</tr>
+@using Domain.Common.DTOs
+@using Domain.Interfaces.Services
+@inject IUserService UserService
+
+@if (User.IsEditing)
+{
+    <tr>
+        <td scope="row">@User.Id</td>
+        <td>
+            <input type="text" class="form-control" placeholder="First Name" @bind="@User.FirstName"/>
+        </td>
+        <td>
+            <input type="text" class="form-control" placeholder="Last Name" @bind="@User.LastName"/>
+        </td>
+        <td>
+            <input type="text" class="form-control" placeholder="Street Address (e.g. 123 Baker St)" @bind="@User.StreetAddress"/>
+        </td>
+        <td>
+            <input type="text" class="form-control" placeholder="City" @bind="@User.City"/>
+        </td>
+        <td>
+            <input type="text" class="form-control" placeholder="State" @bind="@User.State"/>
+        </td>
+        <td>
+            <input type="text" class="form-control" placeholder="Zip Code" @bind="@User.ZipCode"/>
+        </td>
+        <td>
+            <input type="number" class="form-control" placeholder="Age" @bind="@User.Age" min="0" mx="140"/>
+        </td>
+        <td>
+            <input type="text" class="form-control" placeholder="Email" @bind="@User.Email"/>
+        </td>
+        <td>
+            <button type="button" class="btn btn-link" @onclick="() => Cancel.InvokeAsync(User)">
+                <i class="bi bi-x-circle"></i>
+            </button>
+            <button type="button" class="btn btn-link" @onclick="async () => await Save.InvokeAsync(User)">
+                <i class="bi bi-floppy"></i>
+            </button>
+        </td>
+    </tr>
+}
+else
+{
+    <tr>
+        <td>@User.Id</td>
+        <td>@User.FirstName</td>
+        <td>@User.LastName</td>
+        <td>@User.StreetAddress</td>
+        <td>@User.City</td>
+        <td>@User.State</td>
+        <td>@User.ZipCode</td>
+        <td>@User.Age</td>
+        <td>@User.Email</td>
+        <td>
+             <a href="javascript:void(0)" class="btn btn-link" @onclick="() => Start.InvokeAsync(User)">
+                 <i class="bi bi-pen"></i>
+            </a>
+        </td>
+        <td>
+            <a href="javascript:void(0)" class="btn btn-link" @onclick="(async () => await UserDelete.InvokeAsync(User))">
+                <i class="bi bi-trash"></i>
+            </a>
+        </td>
+    </tr>
+}
 
 @code {
-    [Parameter]
-    public int RecordIndex { get; set; }
-
     [Parameter]
     public User User { get; set; } = new();
 
     [Parameter]
+    public List<User>? Users { get; set; }
+
+    [Parameter]
     public EventCallback<User> UserDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<User> Start { get; set; }
+
+    [Parameter]
+    public EventCallback<User> Cancel { get; set; }
+
+    [Parameter]
+    public EventCallback<User> Save { get; set; }
+
 }

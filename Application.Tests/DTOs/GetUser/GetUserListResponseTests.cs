@@ -20,10 +20,10 @@ public class GetUserListResponseTests
     {
         // Arrange
         var response = new GetUserListResponse();
-        var user = new User { FirstName = "John", LastName = "Doe", Email = "john.doe@example.com" };
+        var user = new UserInfo { FirstName = "John", LastName = "Doe", Email = "john.doe@example.com" };
 
         // Act
-        response.Users = new List<User> { user };
+        response.Users = new List<UserInfo> { user };
 
         // Assert
         Assert.Single(response.Users);
@@ -37,7 +37,7 @@ public class GetUserListResponseTests
         var response = new GetUserListResponse();
 
         // Act
-        response.Users = new List<User>();
+        response.Users = new List<UserInfo>();
 
         // Assert
         Assert.NotNull(response.Users);
@@ -49,10 +49,10 @@ public class GetUserListResponseTests
     {
         // Arrange
         var response = new GetUserListResponse();
-        var userWithNullFields = new User { FirstName = null, LastName = null, Email = null };
+        var userWithNullFields = new UserInfo { FirstName = null, LastName = null, Email = null };
 
         // Act
-        response.Users = new List<User> { userWithNullFields };
+        response.Users = new List<UserInfo> { userWithNullFields };
 
         // Assert
         Assert.Single(response.Users);
