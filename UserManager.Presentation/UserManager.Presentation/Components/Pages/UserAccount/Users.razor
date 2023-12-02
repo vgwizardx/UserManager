@@ -1,11 +1,10 @@
 @page "/users"
-@using UserManager.Persistence.Models
 @using Domain.Interfaces.Services
 @using Domain.Common.DTOs
-@using User = UserManager.Persistence.Models.User
+@using User = UserManager.Presentation.Models.User
 @using System.Text.Json
-@using Microsoft.AspNetCore.Mvc.Formatters
 @inject IUserService UserService
+@inject ILogger<Users> Logger
 @rendermode InteractiveServer
 
 <ul class="nav nav-tabs" id="users-tab-nav" role="tablist">
@@ -143,8 +142,7 @@
             }
             catch (Exception ex)
             {
-                //TODO: add logger
-                Console.WriteLine(ex.Message);
+                Logger.LogError("Error updating user {@ex}", ex);
             }
             finally
             {

@@ -1,8 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using Domain.Common.DTOs;
-using Domain.Interfaces.DTOs;
 using Domain.Interfaces.Services;
+using Serilog;
 
 namespace UserManager.Application.API.Controllers;
 
@@ -13,18 +13,18 @@ namespace UserManager.Application.API.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
+    readonly IDiagnosticContext _diagnosticContext;
     private readonly IUserService _service;
-    private readonly ILogger<UserController> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UserController"/> class.
     /// </summary>
-    /// <param name="logger">The logger instance.</param>
     /// <param name="service">The user service instance.</param>
-    public UserController(ILogger<UserController> logger, IUserService service)
+    /// <param name="diagnosticContext">Used for logging </param>
+    public UserController(IUserService service, IDiagnosticContext diagnosticContext)
     {
         _service = service;
-        _logger = logger;
+        _diagnosticContext = diagnosticContext;
     }
 
     /// <summary>

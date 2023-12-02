@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UserManager.Persistence.Models;
+namespace UserManager.Presentation.Models;
 
 public class User
 { 

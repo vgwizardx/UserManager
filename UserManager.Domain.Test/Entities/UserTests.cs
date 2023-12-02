@@ -1,5 +1,4 @@
-﻿using AutoBogus;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using UserManager.Domain.Entities;
 using UserManager.Domain.Test.Helpers;
 using UserManager.Domain.ValueObjects;

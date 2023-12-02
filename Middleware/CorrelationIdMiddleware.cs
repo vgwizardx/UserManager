@@ -5,11 +5,12 @@ namespace Utilities.Middleware;
 
 public class CorrelationIdMiddleware : IMiddleware
 {
+    private const string CorrelationIdHeader = "x-correlation-id";
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var correlationId = context.Request.Headers["Correlation-ID"].FirstOrDefault() ?? Guid.NewGuid().ToString();
-        context.Response.Headers.Append("Correlation-ID", correlationId);
-        using (LogContext.PushProperty("CorrelationID", correlationId))
+        var correlationId = context.Request.Headers[CorrelationIdHeader].FirstOrDefault() ?? Guid.NewGuid().ToString();
+        context.Response.Headers.Append(CorrelationIdHeader, correlationId);
+        using (LogContext.PushProperty(CorrelationIdHeader, correlationId))
         {
             await next(context);
         }

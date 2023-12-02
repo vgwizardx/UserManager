@@ -1,32 +1,33 @@
 ﻿using Infrastructure.Repositories;
 using Moq;
-using System;
-using System.Threading.Tasks;
 using Domain.Common.DTOs;
-using Domain.Interfaces.DTOs;
 using UserManager.Application.API.Services;
 using UserManager.Domain.Test.Helpers;
-using Xunit;
+using Microsoft.Extensions.Logging;
 
 namespace UserManager.Application.API.Tests.Services
 {
     public class UserServiceTests
     {
-        private MockRepository mockRepository;
+        private readonly MockRepository _mockRepository;
 
-        private Mock<IUserManagerRepository> mockUserManagerRepository;
+        private readonly Mock<IUserManagerRepository> _mockUserManagerRepository;
+
+        private Mock<ILogger<UserService>> _mockLogger;
 
         public UserServiceTests()
         {
-            this.mockRepository = new MockRepository(MockBehavior.Strict);
+            _mockRepository = new MockRepository(MockBehavior.Strict);
 
-            mockUserManagerRepository = mockRepository.Create<IUserManagerRepository>();
+            _mockUserManagerRepository = _mockRepository.Create<IUserManagerRepository>();
+
+           _mockLogger =  new Mock<ILogger<UserService>>();
         }
 
         private UserService CreateService()
         {
-            return new UserService(
-                mockUserManagerRepository.Object);
+            return new UserService(_mockLogger.Object, 
+                _mockUserManagerRepository.Object);
         }
 
         [Fact]
@@ -41,7 +42,7 @@ namespace UserManager.Application.API.Tests.Services
             mockRepository.Setup(repo => repo.GetByIdAsync(userId))
                 .ReturnsAsync(fakeUser);
 
-            var userService = new UserService(mockRepository.Object);
+            var userService = CreateService();
 
             // Act
             var result = await userService.GetAsync(userId);
@@ -61,7 +62,7 @@ namespace UserManager.Application.API.Tests.Services
             mockRepository.Setup(repo => repo.GetAllAsync())
                 .ReturnsAsync(fakeUsers);
 
-            var userService = new UserService(mockRepository.Object);
+            var userService = CreateService();
 
             // Act
             var result = await userService.GetAsync();
@@ -97,7 +98,7 @@ namespace UserManager.Application.API.Tests.Services
                 .ReturnsAsync(userToAdd.Id);
             mockRepository.Setup(repo => repo.SaveChangesAsync()).ReturnsAsync(true);
 
-            var userService = new UserService(mockRepository.Object);
+            var userService = CreateService();
 
             // Act
             var result = await userService.AddUserAsync(addUserRequest);
@@ -117,7 +118,7 @@ namespace UserManager.Application.API.Tests.Services
             mockRepository.Setup(repo => repo.Delete(userId)).Verifiable();
             mockRepository.Setup(repo => repo.SaveChangesAsync()).ReturnsAsync(true);
 
-            var userService = new UserService(mockRepository.Object);
+            var userService = CreateService();
 
             // Act
             var result = await userService.DeleteUserAsync(userId);
@@ -154,7 +155,7 @@ namespace UserManager.Application.API.Tests.Services
             mockRepository.Setup(repo => repo.Update(It.IsAny<UserDTO>())).Verifiable();
             mockRepository.Setup(repo => repo.SaveChangesAsync()).ReturnsAsync(true);
 
-            var userService = new UserService(mockRepository.Object);
+            var userService = CreateService();
 
             // Act
             var result = await userService.UpdateUserAsync(userId, updateUserRequest);

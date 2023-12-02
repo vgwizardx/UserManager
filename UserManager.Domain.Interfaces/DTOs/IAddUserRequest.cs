@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Domain.Interfaces.DTOs;
+﻿namespace Domain.Interfaces.DTOs;
 
 public interface IAddUserRequest
 {

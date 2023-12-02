@@ -1,6 +1,4 @@
-﻿using Domain.Interfaces.Entities;
-
-namespace Domain.Interfaces.Repositories;
+﻿namespace Domain.Interfaces.Repositories;
 
 /// <summary>
 /// The repository could be broken up into CRUD interfaces. This would allow us to use ISP and SRP.

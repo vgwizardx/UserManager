@@ -1,6 +1,4 @@
-﻿using System;
-using Domain.Common.DTOs;
-using Xunit;
+﻿using Domain.Common.DTOs;
 
 namespace UserManager.Application.API.Tests.DTOs.UpdateUser;
 

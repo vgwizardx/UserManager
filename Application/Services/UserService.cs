@@ -1,11 +1,7 @@
-﻿using AutoBogus;
-using Bogus.DataSets;
-using Domain.Common.DTOs;
+﻿using Domain.Common.DTOs;
 using Domain.Interfaces.DTOs;
 using Domain.Interfaces.Services;
 using Infrastructure.Repositories;
-using UserManager.Domain.Entities;
-using UserManager.Domain.ValueObjects;
 
 namespace UserManager.Application.API.Services;
 
@@ -14,15 +10,18 @@ namespace UserManager.Application.API.Services;
 /// </summary>
 public class UserService : IUserService
 {
+    private readonly ILogger<UserService> _logger;
     private readonly IUserManagerRepository _userRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UserService"/> class.
     /// </summary>
     /// <param name="userRepository">The user repository.</param>
-    public UserService(IUserManagerRepository userRepository)
+    /// <param name="logger"></param>
+    public UserService(ILogger<UserService> logger, IUserManagerRepository userRepository)
     {
         _userRepository = userRepository;
+        _logger = logger;
     }
 
     /// <summary>
@@ -130,7 +129,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            
+            _logger.LogError("Unable to delete user {id}, exception: {@e}", id, e);
         }
         return false;
     }
@@ -147,7 +146,7 @@ public class UserService : IUserService
         var userToUpdate = await _userRepository.GetByIdAsync(id);
         if (userToUpdate == null)
         {
-            return null; //log not found
+            return null; 
         }
 
         if (!string.IsNullOrEmpty(request.FirstName) && request.FirstName != userToUpdate.FirstName)

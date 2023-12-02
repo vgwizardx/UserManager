@@ -1,10 +1,9 @@
 ﻿using Domain.Common.DTOs;
-using Domain.Interfaces;
 using Domain.Interfaces.DTOs;
 using Domain.Interfaces.Services;
 using Newtonsoft.Json;
 
-namespace UserManager.Persistence.Services;
+namespace UserManager.Presentation.Services;
 
 public class UserService(HttpClient httpClient) : IUserService
 {

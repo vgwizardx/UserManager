@@ -1,6 +1,4 @@
-﻿using System.Net.Mail;
-
-namespace Domain.ValueObjects;
+﻿namespace Domain.ValueObjects;
 
 public interface IEmail
 {

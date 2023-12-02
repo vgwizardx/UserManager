@@ -32,7 +32,7 @@
     <ProjectReference Include="..\Domain.Common\Domain.Common.csproj" />
     <ProjectReference Include="..\Middleware\Utilities.Middleware.csproj" />
     <ProjectReference Include="..\UserManager.Domain.Interfaces\Domain.Interfaces.csproj" />
-    <ProjectReference Include="..\UserManager.Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\UserManager.Infrastructure\UserManager.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

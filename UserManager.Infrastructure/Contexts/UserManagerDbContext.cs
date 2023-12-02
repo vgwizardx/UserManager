@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using AutoBogus;
 using Domain.Common.DTOs;
 using Infrastructure.Seeders;
 using Infrastructure.Configuration;
