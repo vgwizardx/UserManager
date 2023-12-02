@@ -10,25 +10,27 @@ using UserManager.Domain.ValueObjects;
 namespace UserManager.Application.API.Services;
 
 /// <summary>
-/// 
+/// Provides services for managing user data.
 /// </summary>
 public class UserService : IUserService
 {
     private readonly IUserManagerRepository _userRepository;
 
     /// <summary>
-    /// 
+    /// Initializes a new instance of the <see cref="UserService"/> class.
     /// </summary>
+    /// <param name="userRepository">The user repository.</param>
     public UserService(IUserManagerRepository userRepository)
     {
         _userRepository = userRepository;
     }
 
     /// <summary>
-    /// 
+    /// Retrieves a user by their unique identifier.
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">The unique identifier of the user.</param>
+    /// <returns>A task that represents the asynchronous operation. 
+    /// The task result contains the <see cref="IGetUserResponse"/> with user details.</returns>
     public async Task<IGetUserResponse?> GetAsync(Guid id)
     {
         // Using AutoBogus to generate a fake response
@@ -54,9 +56,10 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// 
+    /// Retrieves a list of all users.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A task that represents the asynchronous operation. 
+    /// The task result contains the <see cref="IGetUserListResponse"/> with the list of users.</returns>
     public async Task<IGetUserListResponse?> GetAsync()
     {
         var users = await _userRepository.GetAllAsync();
@@ -81,10 +84,11 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// 
+    /// Adds a new user to the system.
     /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
+    /// <param name="request">The user data to add.</param>
+    /// <returns>A task that represents the asynchronous operation. 
+    /// The task result contains the <see cref="IAddUserResponse"/> with the added user's details.</returns>
     public async Task<IAddUserResponse?> AddUserAsync(IAddUserRequest request)
     {      
         var user = new UserDTO
@@ -112,10 +116,11 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// 
+    /// Deletes a user from the system.
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">The unique identifier of the user to delete.</param>
+    /// <returns>A task that represents the asynchronous operation. 
+    /// The task result is a boolean indicating whether the deletion was successful.</returns>
     public async Task<bool> DeleteUserAsync(Guid id)
     {
         try
@@ -131,11 +136,12 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// 
+    /// Updates a user's information.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="request"></param>
-    /// <returns></returns>
+    /// <param name="id">The unique identifier of the user to update.</param>
+    /// <param name="request">The updated user data.</param>
+    /// <returns>A task that represents the asynchronous operation. 
+    /// The task result contains the <see cref="IUpdateUserResponse"/> with the updated user's details.</returns>
     public async Task<IUpdateUserResponse?> UpdateUserAsync(Guid id, IUpdateUserRequest request)
     {
         var userToUpdate = await _userRepository.GetByIdAsync(id);

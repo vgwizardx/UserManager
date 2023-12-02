@@ -1,13 +1,64 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>UserManager Project</PageTitle>
 
-<h1>Hello, world!</h1>
-
-<p>
-    <a href="http://localhost:8081">Seq logs</a>
-</p>
+<h1>UserManager Project</h1>
 
 <p>
-    <a href="http://localhost:26375/swagger/index.html">Swagger</a>
+    "Create a project in C# with an initial page that shows a list of names with information such as address, phone number, and age. On clicking a name, navigate to a details view where the user can edit the individual's information. Have a Save Cancel and Delete options. Develop the front end using Blazor and architect the solution to show understanding of SOLID principles with the implementation of an API, Controllers, Services, and Data Repositories."
 </p>
+
+<h2>Application Information Page</h2>
+
+<h3>UserManager Project Ui</h3>
+<p>
+    To see the project go <a href="http://localhost:40417">here</a>. If you run into problems double check port (default 40417) is open if you can't connect.
+</p>
+
+<h3>Seq Logs</h3>
+<p>
+    Seq is a centralized log file with superpowers. It's a tool that takes logs from your application and stores them in an easily searchable and analyzable format. This is incredibly useful for debugging and monitoring your applications. You can view the Seq logs for this application after running the in Visual Studio 2022 in debug <a href="http://localhost:8081">here</a>. If you run into problems double check port (default 8081) is open if you can't connect.
+</p>
+
+<h3>Swagger API Documentation</h3>
+<p>
+    Swagger provides a user-friendly interface to interact with the API's endpoints. It's a tool used for documenting APIs and also provides an easy way to test them. To explore the API documentation and test the endpoints, after running the application in debug visit the <a href="http://localhost:26375/swagger/index.html">Swagger page here</a> if it doesn't open automatically. Also, double check port (default 26375) is open if you can't connect.
+</p>
+
+<h3>Connecting to the PostgreSQL Database</h3>
+<p>
+    This application uses PostgreSQL as its database. To connect to the database, use the following credentials:
+    <ul>
+        <li>Database: UsermanagerAPP</li>
+        <li>Username: UsermanagerAPP</li>
+        <li>Password: postgres@123456!</li>
+    </ul>
+    Ensure you have PostgreSQL client tools installed and use these credentials in your connection string.
+</p>
+
+<h3>Additional notes</h3>
+<p>
+    I only tested this in debug and so it may not work if you have it set to Release in visual studio 2022. I also only tested it with Visual Studio. So may not work as expected when using Rider or VS Code. Also make sure you have docker-compose as the start project.
+</p>
+
+<h3>Application Requirements</h3>
+<ul>
+    <li>Visual Studio 2022 (in debug and docker-compose as the start project)</li>
+    <li>.NET 8</li>
+    <li>Docker Desktop</li>
+</ul>
+
+<h3>What's inside</h3>
+<ul>
+    <li>Serilog</li>
+    <li>Seq</li>
+    <li>Blazor</li>
+    <li>BootStrap</li>
+    <li>AutoBogus (used to seed the database)</li>
+    <li>EF Core Postgres with Migrations</li>
+    <li>DockerFile</li>
+    <li>DockerCompose</li>
+    <li>Some Unit test</li>
+    <li>DDD</li>
+    <li>Solid principles</li>
+</ul>
