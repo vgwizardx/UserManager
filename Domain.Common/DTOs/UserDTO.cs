@@ -2,7 +2,7 @@
 
 namespace Domain.Common.DTOs;
 
-public class AddUserResponse : BaseDTO, IAddUserResponse
+public class UserDTO : BaseDTO, IUser
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

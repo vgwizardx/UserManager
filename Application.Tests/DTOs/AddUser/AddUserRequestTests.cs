@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Domain.Common.DTOs;
 
+
 namespace UserManager.Application.API.Tests.DTOs.AddUser;
 
 public class AddUserRequestTests
@@ -43,8 +44,19 @@ public class AddUserRequestTests
     [Fact]
     public void Should_IndicateValid_WhenAllPropertiesAreValid()
     {
+        
         // Arrange
-        var request = new AddUserRequest { FirstName = "John", LastName = "Doe", Email = "test@example.com" };
+        var request = new AddUserRequest
+        {
+            FirstName = "John",
+            LastName = "Doe",
+            StreetAddress = "123 street",
+            City = "Michigan",
+            State = "Michigan",
+            ZipCode = "48654",
+            Age = 56,
+            Email = "test@example.com"
+        };
         var validationContext = new ValidationContext(request);
         var validationResults = new List<ValidationResult>();
 

@@ -7,21 +7,24 @@ namespace Domain.Interfaces.Repositories;
 /// Since this is a sample project I choose to just use one Interface for simplicity. I added in the comments how this could
 /// be refactored.
 /// </summary>
-public interface IUserInfoRepository
+public interface IGenericRepository<T> where T : class
 {
     // Add a new user and return the ID of the created user (ICreate)
-    Task<Guid> AddUserAsync(IUser user);
+    Task<object> AddAsync(T entity);
 
     // Update an existing user and return the ID of the updated user (IUpdate)
-    Task<Guid> UpdateUserAsync(IUser user);
+    void Update(T entity);
 
     // Remove a user (IDelete)
-    Task RemoveUserAsync(IUser user);
+    Task<bool> Delete(object id);
 
     // Get a user by their unique identifier (IRead)
-    Task<IUser> GetUserByIdAsync(Guid userInfoId);
+    Task<T?> GetByIdAsync(object id);
 
     // Get all users (IRead)
-    Task<IEnumerable<IUser>> GetAllUsersAsync();
+    Task<IEnumerable<T>> GetAllAsync();
+
+    Task<bool> SaveChangesAsync();
+
 }
 

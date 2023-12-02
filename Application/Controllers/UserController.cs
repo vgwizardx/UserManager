@@ -44,7 +44,7 @@ public class UserController : ControllerBase
     /// <param name="id">The user's unique identifier.</param>
     /// <returns>The user if found; otherwise, a 404 Not Found.</returns>
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
+    public async Task<IActionResult> Get([FromRoute] Guid id)
     {
         var user = await _service.GetAsync(id);
         return user == null ? NotFound() : Ok(user);
@@ -93,6 +93,7 @@ public class UserController : ControllerBase
     [HttpPatch("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserRequest request)
     {
+
         var user = await _service.UpdateUserAsync(id, request);
         
         if (user != null)
@@ -105,5 +106,35 @@ public class UserController : ControllerBase
         }
 
         return NotFound();
+    }
+
+    /// <summary>
+    /// Deletes a user identified by the specified GUID.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint will remove the user with the given ID from the system. 
+    /// If the user with the specified ID does not exist, the response will be HTTP 404 (Not found).
+    /// </remarks>
+    /// <param name="id">The GUID of the user to delete.</param>
+    /// <returns>
+    /// An <see cref="IActionResult"/> that on successful deletion contains no content (HTTP 204),
+    /// indicating that the request has been successfully processed and there is no additional content to return.
+    /// </returns>
+    /// <response code="204">No content is included in the response when the user is successfully deleted.</response>
+    /// <response code="404">Not Found if there is no user with the specified ID.</response>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    {
+        var user = await _service.GetAsync(id);
+        if (user == null)
+            return NotFound();
+
+        var response = await _service.DeleteUserAsync(id);
+        if (response)
+        {
+            return NoContent();
+        }
+
+        return BadRequest();
     }
 }

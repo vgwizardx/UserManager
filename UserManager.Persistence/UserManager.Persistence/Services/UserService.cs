@@ -36,6 +36,17 @@ public class UserService(HttpClient httpClient) : IUserService
         throw new InvalidOperationException("Error adding user");
     }
 
+    public async Task<bool> DeleteUserAsync(Guid id)
+    {
+        var response = await httpClient.DeleteAsync($"api/user/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     // Update an existing user
     public async Task<IUpdateUserResponse?> UpdateUserAsync(Guid id, IUpdateUserRequest request)
     {

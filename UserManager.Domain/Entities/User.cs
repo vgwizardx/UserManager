@@ -15,7 +15,7 @@ public class User : IUser
     public int Age { get; set; }
     public IEmail Email { get; set; }
 
-    public User(string firstName, string lastName, string streetAddress, string city, string state, string zipCode, int age, IEmail email)
+    public User(Guid id, string firstName, string lastName, string streetAddress, string city, string state, string zipCode, int age, IEmail email)
     {
         if (string.IsNullOrWhiteSpace(firstName))
         {
@@ -28,7 +28,7 @@ public class User : IUser
         }
 
 
-        Id = Guid.NewGuid();
+        Id = id == Guid.Empty ? Guid.NewGuid() : id;
         FirstName = firstName;
         LastName = lastName;
         StreetAddress = streetAddress;
@@ -38,4 +38,5 @@ public class User : IUser
         Age = age;
         Email = email;
     }
+
 }

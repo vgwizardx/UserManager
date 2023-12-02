@@ -22,6 +22,4 @@ public class User
     [Required(ErrorMessage = "Email is required.")]
     public string? Email { get; set; }
     public bool IsEditing { get; set; } = false;
-    public string PropertyName { get; set; } = "";
-    public string EditedValue { get; set; } = "";
 }

@@ -2,6 +2,9 @@
 @using UserManager.Persistence.Models
 @using Domain.Interfaces.Services
 @using Domain.Common.DTOs
+@using User = UserManager.Persistence.Models.User
+@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.Formatters
 @inject IUserService UserService
 @rendermode InteractiveServer
 
@@ -34,6 +37,7 @@
 
     private async Task FetchUsers()
     {
+        Console.WriteLine("Users Fetched");
         var response = await UserService.GetAsync();
 
         if (response != null)
@@ -55,74 +59,87 @@
 
     public async Task DeleteUser(User user)
     {
-        Console.WriteLine("User Deleted");
-        await Task.Delay(200);
+        var response = await UserService.DeleteUserAsync(user.Id);
+        if (response)
+        {
+            _users!.Remove(user);
+        }
     }
 
     private void StartEditing(User user)
     {
-        Console.WriteLine("User Start");
-        _userToEdit = user;
-        _userToEdit.IsEditing = true;
+        Console.WriteLine("UserDTO Start");
+        if (!user.IsEditing)
+        {
+            _userToEdit.FirstName = user.FirstName;
+            _userToEdit.LastName = user.LastName;
+            _userToEdit.StreetAddress = user.StreetAddress;
+            _userToEdit.City = user.City;
+            _userToEdit.State = user.State;
+            _userToEdit.ZipCode = user.ZipCode;
+            _userToEdit.Age = user.Age;
+            _userToEdit.Email = user.Email;
+            var jsonString = JsonSerializer.Serialize(_userToEdit);
+            Console.WriteLine($"UserDTO start _userToEdit {jsonString}");
+            user.IsEditing = true;
+        }
     }
 
     private void CancelEdit(User user)
     {
-        Console.WriteLine("User Cancel");
-        user.IsEditing = false;
+        var jsonString = JsonSerializer.Serialize(user);
+        Console.WriteLine($"UserDTO before cancel user {jsonString}");
+        if (user.IsEditing)
+        {
+            user.FirstName = _userToEdit.FirstName;
+            user.LastName = _userToEdit.LastName;
+            user.StreetAddress = _userToEdit.StreetAddress;
+            user.City = _userToEdit.City;
+            user.State = _userToEdit.State;
+            user.ZipCode = _userToEdit.ZipCode;
+            user.Age = _userToEdit.Age;
+            user.Email = _userToEdit.Email;
+            jsonString = JsonSerializer.Serialize(user);
+            Console.WriteLine($"UserDTO after cancel user {jsonString}");
+            Console.WriteLine("UserDTO Cancel");
+        }
     }
 
     private async Task SaveChanges(User user)
     {
-        Console.WriteLine("User Save");
+        string jsonString = JsonSerializer.Serialize(user);
+        Console.WriteLine($"UserDTO user {jsonString}");
+        jsonString = JsonSerializer.Serialize(_userToEdit);
+        Console.WriteLine($"UserDTO _userToEdit {jsonString}");
         if (user.IsEditing)
         {
             try
             {
-                // Create an IUpdateUserRequest with the updated value
                 var request = new UpdateUserRequest
-                    {
-                        FirstName = user.FirstName, // Initialize with the current value
-                        LastName = user.LastName, // Initialize with the current value
-                        StreetAddress = user.StreetAddress,
-                        City = user.City,
-                        State = user.State,
-                        ZipCode = user.ZipCode,
-                        Age = user.Age,
-                        Email = user.Email
-                    };
-                request.FirstName = _userToEdit.EditedValue;
-                request.LastName = _userToEdit.EditedValue;
-                request.StreetAddress = _userToEdit.EditedValue;
-                request.City = _userToEdit.EditedValue;
-                request.State = _userToEdit.EditedValue;
-                request.ZipCode = _userToEdit.EditedValue;
-                if (int.TryParse(_userToEdit.EditedValue, out var age))
                 {
-                    request.Age = age;
-                }
-                request.Email = _userToEdit.EditedValue;
+                    FirstName = user.FirstName,
+                    LastName = user.LastName, 
+                    StreetAddress = user.StreetAddress,
+                    City = user.City,
+                    State = user.State,
+                    ZipCode = user.ZipCode,
+                    Age = user.Age,
+                    Email = user.Email
+                };
 
                 // Call the UserService to update the user
                 var response = await UserService.UpdateUserAsync(user.Id, request);
 
-                if (response != null)
-                {
-                    // Update the original value with the edited value
-                    user.FirstName = request.FirstName;
-                    user.LastName = request.LastName;
-                    user.StreetAddress = request.StreetAddress;
-                    user.City = request.City;
-                    user.State = request.State;
-                    user.ZipCode = request.ZipCode;
-                    user.Age = request.Age;
-                    user.Email = request.Email;
-                }
-                else
-                {
-                    //TODO: Handle the update error here, e.g., show an error message
-                    // Add error handling logic
-                }
+                // Update the original value with the edited value
+                user.FirstName = response.FirstName;
+                user.LastName = response.LastName;
+                user.StreetAddress = response.StreetAddress;
+                user.City = response.City;
+                user.State = response.State;
+                user.ZipCode = response.ZipCode;
+                user.Age = response.Age;
+                user.Email = response.Email;
+  
             }
             catch (Exception ex)
             {

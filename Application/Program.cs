@@ -1,8 +1,12 @@
 using System.Reflection;
 using Domain.Interfaces.Services;
+using Infrastructure.Seeders;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using UserManager.Application.API.Services;
 using Utilities.Middleware;
+using UserManager.Application.API.Data.Contexts;
+using Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,14 +15,24 @@ builder.Host.UseSerilog((context, loggerConfig) =>
     loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, 
         $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 });
-builder.Services.AddScoped<IUserService, UserService>();
+var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
+var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+var dbUsername = Environment.GetEnvironmentVariable("DB_USERNAME");
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+
+var connectionString = $"Host={dbHost};Database={dbName};Username={dbUsername};Password={dbPassword};Server={dbServer}";
+
+builder.Services.AddNpgsql<UserManagerDbContext>(connectionString);
+builder.Services.AddScoped<IUserManagerRepository, UserManagerRepository>();
+builder.Services.AddSingleton<UserSeeder>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<CorrelationIdMiddleware>();
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
@@ -45,4 +59,22 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
+UpdateDatabase(app);
+
 app.Run();
+
+
+void UpdateDatabase(IApplicationBuilder app)
+{
+    if (app == null) throw new ArgumentNullException(nameof(app));
+
+    using var serviceScope = app.ApplicationServices
+        .GetRequiredService<IServiceScopeFactory>()
+        .CreateScope();
+    using var context = serviceScope
+        .ServiceProvider
+        .GetService<UserManagerDbContext>();
+
+    if (context == null) throw new ArgumentNullException(nameof(UserManagerDbContext));
+        context.Database.Migrate();
+}

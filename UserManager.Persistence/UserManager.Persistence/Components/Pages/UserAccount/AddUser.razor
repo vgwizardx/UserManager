@@ -3,6 +3,7 @@
 @using Domain.Common.DTOs
 @using Microsoft.AspNetCore.Antiforgery
 @using Microsoft.AspNetCore.Mvc
+@using User = UserManager.Persistence.Models.User
 @rendermode InteractiveServer
 
 @inject IUserService UserService
@@ -10,7 +11,7 @@
 
 <div class="row">
     <div class="col-lg-4 pt-4">
-        <EditForm Model="_user" OnValidSubmit="Submit" FormName="AddUser">
+        <EditForm Model="_user" OnValidSubmit="Submit" FormName="AddUserDTO">
             <DataAnnotationsValidator />
             <div class="mb-3">
                 <label class="form-label">First Name</label>

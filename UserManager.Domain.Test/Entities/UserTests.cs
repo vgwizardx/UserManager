@@ -34,7 +34,7 @@ public class UserTests
         var user = new UserFaker().Generate();
         
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => new User(firstName, lastName, user.StreetAddress, user.City, user.State, user.ZipCode, user.Age, user.Email));
+        Assert.Throws<ArgumentException>(() => new User(user.Id, firstName, lastName, user.StreetAddress!, user.City!, user.State!, user.ZipCode!, user.Age, new Email(user.Email!)));
     }
 
 

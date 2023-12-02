@@ -1,7 +1,11 @@
 ﻿using AutoBogus;
+using Bogus.DataSets;
 using Domain.Common.DTOs;
 using Domain.Interfaces.DTOs;
 using Domain.Interfaces.Services;
+using Infrastructure.Repositories;
+using UserManager.Domain.Entities;
+using UserManager.Domain.ValueObjects;
 
 namespace UserManager.Application.API.Services;
 
@@ -10,6 +14,16 @@ namespace UserManager.Application.API.Services;
 /// </summary>
 public class UserService : IUserService
 {
+    private readonly IUserManagerRepository _userRepository;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public UserService(IUserManagerRepository userRepository)
+    {
+        _userRepository = userRepository;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -18,17 +32,25 @@ public class UserService : IUserService
     public async Task<IGetUserResponse?> GetAsync(Guid id)
     {
         // Using AutoBogus to generate a fake response
-        var fakeUserResponse = new AutoFaker<GetUserResponse>()
-            .RuleFor(u => u.FirstName, faker => faker.Name.FirstName())
-            .RuleFor(u => u.LastName, faker => faker.Name.LastName())
-            .RuleFor(u => u.StreetAddress, faker => faker.Address.StreetAddress())
-            .RuleFor(u => u.City, faker => faker.Address.City())
-            .RuleFor(u => u.State, faker => faker.Address.State())
-            .RuleFor(u => u.ZipCode, faker => faker.Address.ZipCode())
-            .RuleFor(u => u.Age, faker => faker.Random.Int(18, 100))
-            .RuleFor(u => u.Email, faker => faker.Internet.Email()).Generate();
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user == null)
+        {
+            return null;
+        }
 
-        return await Task.FromResult(fakeUserResponse);
+        var userResponse = new GetUserResponse
+        {
+            FirstName = user?.FirstName,
+            LastName = user?.LastName,
+            StreetAddress = user?.StreetAddress,
+            City = user?.City,
+            State = user?.State,
+            ZipCode = user?.ZipCode,
+            Age = user?.Age ?? throw new NullReferenceException("The value of 'user?.Age' should not be null"),
+            Email = user.Email
+        };
+
+        return userResponse;
     }
 
     /// <summary>
@@ -37,25 +59,25 @@ public class UserService : IUserService
     /// <returns></returns>
     public async Task<IGetUserListResponse?> GetAsync()
     {
-        var userInfoFaker = new AutoFaker<UserInfo>()
-            .RuleFor(u => u.Id, faker => faker.Random.Guid()) 
-            .RuleFor(u => u.FirstName, faker => faker.Name.FirstName())
-            .RuleFor(u => u.LastName, faker => faker.Name.LastName())
-            .RuleFor(u => u.StreetAddress, faker => faker.Address.StreetAddress())
-            .RuleFor(u => u.City, faker => faker.Address.City())
-            .RuleFor(u => u.State, faker => faker.Address.State())
-            .RuleFor(u => u.ZipCode, faker => faker.Address.ZipCode())
-            .RuleFor(u => u.Age, faker => faker.Random.Int(18, 100))
-            .RuleFor(u => u.Email, faker => faker.Internet.Email());
+        var users = await _userRepository.GetAllAsync();
 
-        List<UserInfo> userInfos = userInfoFaker.Generate(5); 
-
-        var fakeUserListResponse = new GetUserListResponse
+        var getUserListResponse = new GetUserListResponse
         {
-            Users = userInfos
+            Users = users.Select(user => new UserDTO
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                StreetAddress = user.StreetAddress,
+                City = user.City,
+                State = user.State,
+                ZipCode = user.ZipCode,
+                Age = user.Age,
+                Email = user.Email
+            })
         };
 
-        return await Task.FromResult(fakeUserListResponse);
+        return getUserListResponse;
     }
 
     /// <summary>
@@ -64,12 +86,48 @@ public class UserService : IUserService
     /// <param name="request"></param>
     /// <returns></returns>
     public async Task<IAddUserResponse?> AddUserAsync(IAddUserRequest request)
-    {
-        // Generating a fake response for adding a user
-        var fakeAddUserResponse =  new AutoFaker<AddUserResponse>()
-            .RuleFor(u => u.Email, faker => faker.Internet.Email()).Generate();
+    {      
+        var user = new UserDTO
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            StreetAddress = request.StreetAddress,
+            City = request.City,
+            State = request.State,
+            ZipCode = request.ZipCode,
+            Age = request.Age,
+            Email = request.Email
+        };
 
-        return await Task.FromResult(fakeAddUserResponse);
+       var addResponse = await _userRepository.AddAsync(user);
+       await _userRepository.SaveChangesAsync();
+
+        var response = new AddUserResponse
+        {
+            Email = user.Email,
+            Id = (Guid)addResponse
+        };
+
+        return await Task.FromResult(response);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<bool> DeleteUserAsync(Guid id)
+    {
+        try
+        {
+            await _userRepository.Delete(id);
+            return await _userRepository.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            
+        }
+        return false;
     }
 
     /// <summary>
@@ -80,10 +138,68 @@ public class UserService : IUserService
     /// <returns></returns>
     public async Task<IUpdateUserResponse?> UpdateUserAsync(Guid id, IUpdateUserRequest request)
     {
-        // Generating a fake response for updating a user
-        var fakeUpdateUserResponse =new AutoFaker<UpdateUserResponse>()
-            .RuleFor(u => u.Email, faker => faker.Internet.Email()).Generate();
+        var userToUpdate = await _userRepository.GetByIdAsync(id);
+        if (userToUpdate == null)
+        {
+            return null; //log not found
+        }
 
-        return await Task.FromResult(fakeUpdateUserResponse);
+        if (!string.IsNullOrEmpty(request.FirstName) && request.FirstName != userToUpdate.FirstName)
+        {
+            userToUpdate.FirstName = request.FirstName;
+        }
+
+        if (!string.IsNullOrEmpty(request.LastName) && request.LastName != userToUpdate.LastName)
+        {
+            userToUpdate.LastName = request.LastName;
+        }
+
+        if (!string.IsNullOrEmpty(request.StreetAddress) && request.StreetAddress != userToUpdate.StreetAddress)
+        {
+            userToUpdate.StreetAddress = request.StreetAddress;
+        }
+
+        if (!string.IsNullOrEmpty(request.City) && request.City != userToUpdate.City)
+        {
+            userToUpdate.City = request.City;
+        }
+
+        if (!string.IsNullOrEmpty(request.State) && request.State != userToUpdate.State)
+        {
+            userToUpdate.State = request.State;
+        }
+
+        if (!string.IsNullOrEmpty(request.ZipCode) && request.ZipCode != userToUpdate.ZipCode)
+        {
+            userToUpdate.ZipCode = request.ZipCode;
+        }
+
+        if (request.Age != 0 && request.Age != userToUpdate.Age)
+        {
+            userToUpdate.Age = request.Age;
+        }
+
+        if (!string.IsNullOrEmpty(request.Email) && request.Email != userToUpdate.Email)
+        {
+            userToUpdate.Email = request.Email;
+        }
+
+        _userRepository.Update(userToUpdate);
+        await _userRepository.SaveChangesAsync();
+
+        var updateUserResponse = new UpdateUserResponse
+        {
+            FirstName = userToUpdate?.FirstName,
+            LastName = userToUpdate?.LastName,
+            StreetAddress = userToUpdate?.StreetAddress,
+            City = userToUpdate?.City,
+            State = userToUpdate?.State,
+            ZipCode = userToUpdate?.ZipCode,
+            Age = userToUpdate!.Age,
+            Email = userToUpdate?.Email,
+            Id = userToUpdate!.Id
+        };
+
+        return updateUserResponse;
     }
 }
