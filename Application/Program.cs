@@ -47,6 +47,7 @@ try
     builder.Services.AddScoped<IUserManagerRepository, UserManagerRepository>();
     builder.Services.AddSingleton<UserSeeder>();
     builder.Services.AddTransient<IUserService, UserService>();
+    builder.Services.AddTransient<CorrelationIdMiddleware>();
     builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
     var app = builder.Build();
@@ -59,7 +60,17 @@ try
     }
 
     #region Middlewares
-    app.UseSerilogRequestLogging();
+    app.UseMiddleware<CorrelationIdMiddleware>();
+    app.UseSerilogRequestLogging(options =>
+    {
+        // Attach additional properties to the request completion event
+        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+            diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
+            
+        };
+    });
     app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
     #endregion
 
