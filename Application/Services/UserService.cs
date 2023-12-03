@@ -47,7 +47,7 @@ public class UserService : IUserService
             City = user?.City,
             State = user?.State,
             ZipCode = user?.ZipCode,
-            Age = user?.Age ?? throw new NullReferenceException("The value of 'user?.Age' should not be null"),
+            Age = user!.Age,
             Email = user.Email
         };
 
@@ -122,16 +122,8 @@ public class UserService : IUserService
     /// The task result is a boolean indicating whether the deletion was successful.</returns>
     public async Task<bool> DeleteUserAsync(Guid id)
     {
-        try
-        {
-            await _userRepository.Delete(id);
-            return await _userRepository.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Unable to delete user {id}, exception: {@e}", id, e);
-        }
-        return false;
+        await _userRepository.Delete(id);
+        return await _userRepository.SaveChangesAsync();
     }
 
     /// <summary>
@@ -146,6 +138,7 @@ public class UserService : IUserService
         var userToUpdate = await _userRepository.GetByIdAsync(id);
         if (userToUpdate == null)
         {
+            
             return null; 
         }
 

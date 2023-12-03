@@ -1,4 +1,4 @@
-﻿@using Domain.Interfaces.Services
+@using Domain.Interfaces.Services
 @using Domain.Common.DTOs
 @using Microsoft.AspNetCore.Antiforgery
 @using Microsoft.AspNetCore.Mvc
@@ -63,7 +63,7 @@
     [Parameter]
     public EventCallback OnUserCreated{ get; set; }
 
-    private User _user = new User();
+    private User _user = new();
 
     [ValidateAntiForgeryToken]
     public async Task Submit()
@@ -93,10 +93,6 @@
                 {
                     await OnUserCreated.InvokeAsync();
                 }
-            }
-            else
-            {
-                
             }
         }
     }

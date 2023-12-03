@@ -5,25 +5,36 @@ using Newtonsoft.Json;
 
 namespace UserManager.Presentation.Services;
 
-public class UserService(HttpClient httpClient) : IUserService
+public class UserService(HttpClient httpClient, ILogger<UserService> logger) : IUserService
 {
 
-    // Retrieve all users
+    /// <summary>
+    /// Get all users
+    /// </summary>
+    /// <returns></returns>
     public async Task<IGetUserListResponse?> GetAsync()
     {
         var get = await httpClient.GetAsync("api/user/");
         var resString = get.Content.ReadAsStringAsync();
-        var response = JsonConvert.DeserializeObject<GetUserListResponse>(resString.Result);
-        return response;
+        return JsonConvert.DeserializeObject<GetUserListResponse>(resString.Result);
     }
 
-    // Retrieve a specific user by ID
+    /// <summary>
+    /// Get user by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<IGetUserResponse?> GetAsync(Guid id)
     {
         return await httpClient.GetFromJsonAsync<GetUserResponse>($"api/user/{id}");
     }
 
-    // Add a new user
+    /// <summary>
+    /// Add new user
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<IAddUserResponse?> AddUserAsync(IAddUserRequest request)
     {
         var response = await httpClient.PostAsJsonAsync("api/user", request);
@@ -32,9 +43,15 @@ public class UserService(HttpClient httpClient) : IUserService
             return await response.Content.ReadFromJsonAsync<AddUserResponse>();
         }
 
-        throw new InvalidOperationException("Error adding user");
+        logger.LogError("Add failed - Message: {message}, status code: {statusCode}", response.RequestMessage, response.StatusCode);
+        return null;
     }
 
+    /// <summary>
+    /// Delete User
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<bool> DeleteUserAsync(Guid id)
     {
         var response = await httpClient.DeleteAsync($"api/user/{id}");
@@ -43,19 +60,27 @@ public class UserService(HttpClient httpClient) : IUserService
             return true;
         }
 
+        logger.LogError("Delete failed - Message: {message}, status code: {statusCode}", response.RequestMessage, response.StatusCode);
         return false;
     }
 
-    // Update an existing user
+    /// <summary>
+    /// Update an existing user
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<IUpdateUserResponse?> UpdateUserAsync(Guid id, IUpdateUserRequest request)
     {
-        var response = await httpClient.PatchAsync($"api/user/{id}", JsonContent.Create(request));
+        var response = await httpClient.PatchAsJsonAsync($"api/user/{id}", request);
         if (response.IsSuccessStatusCode)
         {
             return await response.Content.ReadFromJsonAsync<UpdateUserResponse>();
         }
 
-        throw new InvalidOperationException("Error updating user");
+        logger.LogError("Update failed - Message: {message}, status code: {statusCode}", response.RequestMessage, response.StatusCode);
+        return null;
     }
 
 }

@@ -4,10 +4,8 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "usermanager.application.api": "StartDebugging",
-        "usermanager.persistence": "StartDebugging",
-        "blazorapp1": "StartDebugging",
-        "demoblazorserverapp": "StartDebugging"
+        "usermanager.presentation": "StartDebugging",
+        "usermanager.application.api": "StartDebugging"
       }
     }
   }
