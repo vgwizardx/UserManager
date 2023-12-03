@@ -23,10 +23,10 @@
         </tr>
     </thead>
     <tbody>
-        @for (var i = 0; i < Users.Count; i++)
-        {
-                <UserRecord User="@Users[i]" UserDelete="UserDelete" Cancel="Cancel" Save="Save" Start="Start"></UserRecord>
-        }
+    @foreach (var user in Users)
+    {
+        <UserRecord User="@user" UserDelete="UserDelete" Cancel="Cancel" Save="Save" Start="Start"></UserRecord>
+    }
     </tbody>
  </table>
 }
